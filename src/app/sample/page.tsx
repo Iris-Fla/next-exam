@@ -10,7 +10,7 @@ const Page = async () => {
       <ul>
         {examdata.map((data) => (
           <li key={data.id}>
-            <Link href={`/examdata/${data.id}`}>
+            <Link href={`/exam/${data.id}`}>
               <p>{data.problem_statement}</p>
             </Link>
           </li>
