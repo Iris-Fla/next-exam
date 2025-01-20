@@ -52,7 +52,7 @@ const ExamDetailPage = async ({ params }: { params: Params }) => {
           {/* Navigation back to exam list */}
           <div className="mt-6">
             <Link 
-              href="/" 
+              href="/exam" 
               className="text-blue-500 hover:underline"
             >
               ← Back to Exam List
