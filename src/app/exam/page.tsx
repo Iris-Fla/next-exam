@@ -1,18 +1,10 @@
-import Prisma from "@/lib/prisma";
-const ExamListPage = async () => {
-  const examList = Prisma.examdata.findMany();
+import { ExamList } from "@/features/exam/components/Examlist";
+
+export default function ExamPage() {
   return (
     <div>
-      <h1>Exam List</h1>
-        <ul>
-            {(await examList).map((exam) => (
-            <li key={exam.id}>
-                <a href={`/exam/${exam.id}`}>{exam.problem_statement}</a>
-            </li>
-            ))}
-        </ul>
+      <h1>Exam List Page</h1>
+      <ExamList />
     </div>
   );
-};
-
-export default ExamListPage;
+}
