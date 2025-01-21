@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { ExamData } from '@/interfaces/examData';
-import { useParams } from 'next/navigation';
+"use client";
+import { useState, useEffect } from "react";
+import { ExamData } from "@/interfaces/examData";
+import { useParams } from "next/navigation";
 
 export function useExamData() {
   const params = useParams();
@@ -13,13 +14,13 @@ export function useExamData() {
       setLoading(false);
       return;
     }
-    
+
     async function fetchData() {
       try {
         const response = await fetch(`/api/exam/${id}`);
         if (!response.ok) {
-          console.log(Error)
-          throw new Error('Failed to fetch exam data');
+          console.log(Error);
+          throw new Error("Failed to fetch exam data");
         }
 
         const data: ExamData = await response.json();

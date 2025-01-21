@@ -1,9 +1,7 @@
 "use client";
+import { useExamData } from "@/hooks/useExamData";
 
-import Link from 'next/link';
-import { useExamData } from '@/hooks/useExamData';
-
-export default function Examdetail() {
+export function Examdetail() {
   const { examData, loading } = useExamData();
 
   if (loading) {
@@ -23,9 +21,6 @@ export default function Examdetail() {
           <h2 className="text-xl font-semibold mb-2">Problem Statement</h2>
           <p className="text-gray-700">{examData.problem_statement}</p>
         </div>
-        <Link href="/exam" className="text-blue-500 hover:underline">
-          ← Back to Exam List
-        </Link>
       </div>
     </div>
   );
