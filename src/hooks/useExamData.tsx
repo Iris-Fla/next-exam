@@ -18,6 +18,7 @@ export function useExamData() {
       try {
         const response = await fetch(`/api/exam/${id}`);
         if (!response.ok) {
+          console.log(Error)
           throw new Error('Failed to fetch exam data');
         }
 

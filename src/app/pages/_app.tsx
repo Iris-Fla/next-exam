@@ -1,13 +1,12 @@
 // src/pages/_app.tsx
 import { AppProps } from 'next/app';
-import Layout from '@/components/Layout';
 import '@/styles/globals.css';
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
-    <Layout>
+    <div>
       <Component {...pageProps} />
-    </Layout>
+    </div>
   );
 }
 
