@@ -10,11 +10,13 @@ if (process.env.NODE_ENV === 'production') {
   Prisma = new PrismaClient({
     log: ['query', 'info', 'warn', 'error'],
   });
+  console.log("Production");
 } else {
   if (!global.prisma) {
     global.prisma = new PrismaClient({
       log: ['query', 'info', 'warn', 'error'],
     });
+    console.log("Development");
   }
   Prisma = global.prisma;
 }
