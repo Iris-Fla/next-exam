@@ -10,5 +10,6 @@ export interface ExamData {
     problem_img: string;
     choices: JsonValue;
     choices_img_path: JsonValue;
+    correct: number;
     explanation: string;
 }
