@@ -17,9 +17,6 @@ export function useExamData() {
 
     async function fetchData() {
       try {
-        console.log("Hi");
-        console.log(process.env.NODE_ENV);
-        console.log(process.env.production);
         const response = await fetch(`/api/exam/${id}`);
         if (!response.ok) {
           console.log(Error);

@@ -1,11 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-import dotenv from 'dotenv';
-
-if (process.env.NODE_ENV === 'production') {
-  dotenv.config({ path: '.env.production' });
-} else {
-  dotenv.config();
-}
+import { PrismaClient } from "@prisma/client";
 
 declare global {
   // eslint-disable-next-line no-var
@@ -14,13 +7,14 @@ declare global {
 
 let Prisma: PrismaClient;
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "development") {
   Prisma = new PrismaClient({
+    log: ["query", "info", "warn", "error"],
   });
 } else {
   if (!global.prisma) {
     global.prisma = new PrismaClient({
-      log: ['query', 'info', 'warn', 'error'],
+      log: ["query", "info", "warn", "error"],
     });
   }
   Prisma = global.prisma;
