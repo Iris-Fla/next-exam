@@ -1,7 +1,7 @@
 import { defineStorage } from '@aws-amplify/backend';
 
 export const storage = defineStorage({
-  name: 'ExamImgStorage',
+  name: 'examimgstorage',
   access: (allow) => ({
       'examdata/{entity_id}/*': [
         allow.guest.to(['read','write']),
