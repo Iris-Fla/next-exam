@@ -4,7 +4,7 @@ export const storage = defineStorage({
   name: 'ExamImgStorage',
   access: (allow) => ({
       'examdata/{entity_id}/*': [
-        allow.guest.to(['read']),
+        allow.guest.to(['read','write']),
         allow.entity('identity').to(['read', 'write', 'delete'])
       ],
       'examdata-public/*': [
