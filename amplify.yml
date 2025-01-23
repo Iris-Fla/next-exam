@@ -11,6 +11,7 @@ frontend:
   phases:
     build:
       commands:
+        - echo $DATABASE_URL
         - echo "DATABASE_URL=$DATABASE_URL" >> .env
         - npx prisma generate
         - npm run build
