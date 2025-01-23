@@ -15,7 +15,7 @@ export default function App() {
   const handleUpload = () => {
     if (file) { // file が undefined でないことを確認
       uploadData({
-        path: `picture-submissions/${file.name}`,
+        path: `examdata/${file.name}`,
         data: file,
       })
       alert(`${file.name}がアップロードされました。`)
