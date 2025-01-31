@@ -22,8 +22,8 @@ export default {
         // 他の科目のグラデーションを追加
       },
       fontFamily: {
-        noto:['var(--font-noto)'],
-        mplus:['var(--font-mplus)'],
+        noto:["var(--font-Noto-Sans-JP)"],
+        mplus:["var(--font-M-PLUS-Rounded-1c)"],
       },
     },
   },
