@@ -7,7 +7,7 @@ export function Examdetail() {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   if (loading) {
-    return <div>ロードちゅう</div>;
+    return <div>loading</div>;
   }
 
   if (!examData) {
@@ -32,33 +32,37 @@ export function Examdetail() {
 
   return (
     <div>
-      <h1>年度:{examData.exam_year}</h1>
-      <p>科目:{examData.subject}</p>
-      <p>本文:{examData.problem_statement}</p>
-      <div>
+      <h1 className="text-2xl font-bold mb-4">年度: {examData.exam_year}</h1>
+      <p className="text-lg mb-2">科目: {examData.subject}</p>
+      <p className="text-base mb-4">本文: {examData.problem_statement}</p>
+      <div className="mb-4">
         {choicesArray.length > 0 ? (
-          <div>
+          <div className="grid grid-cols-1 gap-4">
             {choicesArray.map((choice, index) => (
-              <button key={index} onClick={() => handleChoiceClick(index)}>
+              <button
+                key={index}
+                onClick={() => handleChoiceClick(index)}
+                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+              >
                 {choice}
               </button>
             ))}
           </div>
         ) : (
-          <p>選択肢が見つかりませんでした</p>
+          <p className="text-red-500">選択肢が見つかりませんでした</p>
         )}
       </div>
       {isCorrect !== null && (
-        <div>
+        <div className="mt-4 p-4 border rounded">
           {isCorrect ? (
             <div>
-              <p>正解</p>
-              <p>解説: {examData.explanation}</p>
+              <p className="text-green-500 font-bold">正解</p>
+              <p className="text-base">解説: {examData.explanation}</p>
             </div>
           ) : (
             <div>
-              <p>不正解</p>
-              <p>解説:</p>
+              <p className="text-red-500 font-bold">不正解</p>
+              <p className="text-base">解説: {examData.explanation}</p>
             </div>
           )}
         </div>
