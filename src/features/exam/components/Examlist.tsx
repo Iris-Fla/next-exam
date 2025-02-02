@@ -22,7 +22,7 @@ export const ExamList = async () => {
           <a
             href={`/exam/${exam.id}`}
             key={exam.id}
-            className={`shadow-md rounded-lg p-4 ${getBackgroundClass(exam.subject)}`}
+            className={`drop-shadow-md rounded-lg p-4 transition duration-150 ease-in-out hover:scale-105 ${getBackgroundClass(exam.subject)}`}
           >
             <div className="text-xl line-clamp-1 font-medium font-mplus">
               第{exam.exam_year}回 : {exam.subject}
