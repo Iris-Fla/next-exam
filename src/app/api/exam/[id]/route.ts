@@ -12,15 +12,27 @@ export async function GET(
       return NextResponse.json({ error: "Invalid exam ID" }, { status: 400 });
     }
 
-    const examData = await Prisma.examdata.findUnique({
+    const DetailExam = await Prisma.examdata.findUnique({
       where: { id: examId },
     });
 
-    if (!examData) {
+    if (!DetailExam) {
       return NextResponse.json({ error: "Exam not found" }, { status: 404 });
     }
 
-    return NextResponse.json(examData, { status: 200 });
+    // 同じ教科と学年の問題を4つ取得する
+    const RecommendedExams = await Prisma.examdata.findMany({
+      where: {
+        subject: DetailExam.subject,
+        grade: DetailExam.grade,
+        id: {
+          not: examId, // 現在の問題を除外
+        },
+      },
+      take: 4,
+    });
+
+    return NextResponse.json({ DetailExam, RecommendedExams }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json(

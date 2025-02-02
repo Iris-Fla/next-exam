@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 export function useExamData() {
   const params = useParams();
   const id = params?.id;
-  const [examData, setExamData] = useState<ExamData | null>(null);
+  const [ExamData, setExamData] = useState<ExamData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,5 +35,5 @@ export function useExamData() {
     fetchData();
   }, [id]);
 
-  return { examData, loading };
+  return { ExamData, loading };
 }
