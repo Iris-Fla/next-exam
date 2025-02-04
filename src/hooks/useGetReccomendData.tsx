@@ -16,8 +16,8 @@ export function useGetReccomendData() {
       setLoading(true);
       try {
         const query = new URLSearchParams({ subject, grade: grade?.toString() || '' }).toString();
-        console.log(`/api/recommend/${id}?${query}`);
-        const response = await fetch(`/api/recommend/${id}?${query}`);
+        console.log(`/api/exam/${id}?${query}`);
+        const response = await fetch(`/api/exam/${id}?${query}`);
         if (!response.ok) {
           throw new Error("Failed to fetch exam data");
         }
