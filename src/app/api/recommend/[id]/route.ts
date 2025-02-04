@@ -5,30 +5,31 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params;
+  const { id } = await params;
   try {
     const examId = Number(id);
     if (isNaN(examId)) {
       return NextResponse.json({ error: "不正なIDの可能性があります" }, { status: 400 });
     }
 
-    const DetailExam = await Prisma.examdata.findUnique({
-      where: { id: examId },
-      select: {
-        subject: true,
-        grade: true,
-      },
-    });
+    const url = new URL(req.url);
+    const subject = url.searchParams.get('subject');
+    const grade = url.searchParams.get('grade');
 
-    if (!DetailExam) {
-      return NextResponse.json({ error: "Recommend Data Error" }, { status: 404 });
+    if (!subject || !grade) {
+      return NextResponse.json({ error: "クエリパラメータが不足しています" }, { status: 400 });
+    }
+
+    const gradeNumber = Number(grade);
+    if (isNaN(gradeNumber)) {
+      return NextResponse.json({ error: "不正な学年の値です" }, { status: 400 });
     }
 
     // 同じ教科と学年の問題を4つ取得する
     const RecommendedExams = await Prisma.examdata.findMany({
       where: {
-        subject: DetailExam.subject,
-        grade: DetailExam.grade,
+        subject: subject,
+        grade: gradeNumber,
         id: {
           not: examId,
         },
@@ -43,7 +44,7 @@ export async function GET(
       },
     });
 
-    return NextResponse.json({ DetailExam, RecommendedExams }, { status: 200 });
+    return NextResponse.json({ RecommendedExams }, { status: 200 });
   } catch (error) {
     console.error("不明なエラー", error);
     return NextResponse.json(
