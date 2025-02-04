@@ -7,15 +7,11 @@ export function useExamData() {
   const params = useParams();
   const id = params?.id;
   const [ExamData, setExamData] = useState<ExamData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!id) {
-      setLoading(false);
-      return;
-    }
-
     async function fetchData() {
+      setLoading(true);
       try {
         const response = await fetch(`/api/exam/${id}`);
         if (!response.ok) {
