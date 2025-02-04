@@ -1,14 +1,20 @@
 "use client";
+import { useState, useEffect } from "react";
 import { useExamData } from "@/hooks/useExamData";
-import { useState } from "react";
 import { useRecommendExamData } from "@/hooks/useSubjectContext";
 
 export function Examdetail() {
   const { ExamData, loading } = useExamData();
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [animate, setAnimate] = useState(false);
-  const {setSubject} = useRecommendExamData();
-  const {setGrade} = useRecommendExamData();
+  const { setSubject, setGrade } = useRecommendExamData();
+
+  useEffect(() => {
+    if (ExamData) {
+      setSubject(ExamData.DetailExam.subject);
+      setGrade(ExamData.DetailExam.grade);
+    }
+  }, [ExamData, setSubject, setGrade]);
 
   if (loading) {
     return <div>loading</div>;
@@ -17,9 +23,6 @@ export function Examdetail() {
   if (!ExamData) {
     return <div>試験データが見つかりませんでした</div>;
   }
-
-  setSubject(ExamData.DetailExam.subject);
-  setGrade(ExamData.DetailExam.grade);
 
   const choicesArray = Array.isArray(ExamData.DetailExam.choices)
     ? (ExamData.DetailExam.choices as string[])
@@ -36,18 +39,6 @@ export function Examdetail() {
     }
     setAnimate(true);
     setTimeout(() => setAnimate(false), 300); // アニメーションの時間を設定
-  };
-
-  const getBackgroundClass = (subject: string) => {
-    switch (subject) {
-      case '物理':
-        return 'bg-physics-gradient';
-      case '化学':
-        return 'bg-chemistry-gradient';
-      // 他の科目のクラスを追加
-      default:
-        return 'bg-white';
-    }
   };
 
   return (
@@ -99,26 +90,6 @@ export function Examdetail() {
             </div>
           )}
         </div>
-      </div>
-      <hr className="my-4 border-4 border-slate-700 rounded-lg transition-all duration-300" />
-      <div className="text-2xl font-bold my-4">オススメの問題</div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {Array.isArray(ExamData.RecommendedExams) && ExamData.RecommendedExams.map((exam) => (
-          <a
-            href={`/exam/${exam.id}`}
-            key={exam.id}
-            className={`drop-shadow-md rounded-lg p-4 transition duration-150 ease-in-out hover:scale-105 ${getBackgroundClass(exam.subject)}`}
-          >
-            <div className="text-xl line-clamp-1 font-medium font-mplus">
-              第{exam.exam_year}回 : {exam.subject}
-              <span className="text-sm font-normal m-2">
-                ({exam.grade}年)</span>
-            </div>
-            <div className="text-lg line-clamp-1">
-              {exam.problem_statement}
-            </div>
-          </a>
-        ))}
       </div>
     </div>
   );
