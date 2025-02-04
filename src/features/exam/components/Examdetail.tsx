@@ -1,12 +1,14 @@
 "use client";
 import { useExamData } from "@/hooks/useExamData";
 import { useState } from "react";
+import { useRecommendExamData } from "@/hooks/useSubjectContext";
 
 export function Examdetail() {
   const { ExamData, loading } = useExamData();
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [animate, setAnimate] = useState(false);
-
+  const {setSubject} = useRecommendExamData();
+  const {setGrade} = useRecommendExamData();
 
   if (loading) {
     return <div>loading</div>;
@@ -15,6 +17,9 @@ export function Examdetail() {
   if (!ExamData) {
     return <div>試験データが見つかりませんでした</div>;
   }
+
+  setSubject(ExamData.DetailExam.subject);
+  setGrade(ExamData.DetailExam.grade);
 
   const choicesArray = Array.isArray(ExamData.DetailExam.choices)
     ? (ExamData.DetailExam.choices as string[])
