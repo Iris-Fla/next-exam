@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Examdetail } from "@/features/exam/components/Examdetail";
-import { Examrecommend } from "@/features/exam/components/ExamRecommend";
+import { Examdetail } from "@/components/exam/Examdetail";
+import { Examrecommend } from "@/components/exam/ExamRecommend";
 
 export default function ExamDetailPage() {
   return (
