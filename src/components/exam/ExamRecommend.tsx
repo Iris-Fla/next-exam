@@ -1,5 +1,6 @@
 "use client";
 import { useGetReccomendData } from "@/hooks/useGetReccomendData";
+import { subjectBackgroundClass } from "@/utils/subjectBackgroundClass";
 
 export function Examrecommend() {
   const { ExamData, loading } = useGetReccomendData();
@@ -12,17 +13,6 @@ export function Examrecommend() {
     return <div>オススメデータが見つかりませんでした</div>;
   }
 
-  const getBackgroundClass = (subject: string) => {
-    switch (subject) {
-      case "物理":
-        return "bg-physics-gradient";
-      case "化学":
-        return "bg-chemistry-gradient";
-      // 他の科目のクラスを追加
-      default:
-        return "bg-white";
-    }
-  };
   return (
     <div>
       <div className="text-2xl font-bold my-4">オススメの問題</div>
@@ -32,7 +22,7 @@ export function Examrecommend() {
             <a
               href={`/exam/${exam.id}`}
               key={exam.id}
-              className={`drop-shadow-md rounded-lg p-4 transition duration-150 ease-in-out hover:scale-105 ${getBackgroundClass(
+              className={`drop-shadow-md rounded-lg p-4 transition duration-150 ease-in-out hover:scale-105 ${subjectBackgroundClass(
                 exam.subject
               )}`}
             >

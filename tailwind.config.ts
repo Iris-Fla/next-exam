@@ -17,9 +17,16 @@ export default {
         foreground: "var(--foreground)",
       },
       backgroundImage: {
-        'physics-gradient': 'linear-gradient(to right, #ffffff,rgb(255, 201, 187))', // オレンジ色のグラデーション
-        'chemistry-gradient': 'linear-gradient(to right, #ffffff,rgb(184, 255, 233))', // 緑色のグラデーション
-        // 他の科目のグラデーションを追加
+        'physics-gradient': 'linear-gradient(to right, #ffffff, rgb(255, 201, 187))',
+        'chemistry-gradient': 'linear-gradient(to right, #ffffff, rgb(184, 255, 233))',
+        'biology-gradient': 'linear-gradient(to right, #ffffff, #8bc34a)',
+        'hygiene-gradient': 'linear-gradient(to right, #ffffff, #4dd0e1)',
+        'pharmacology-gradient': 'linear-gradient(to right, #ffffff, #ab47bc)',
+        'pharmacy-gradient': 'linear-gradient(to right, #ffffff, #ffa726)',
+        'pathology-pharmacotherapy-gradient': 'linear-gradient(to right, #ffffff, #ec407a)',
+        'legal-system-gradient': 'linear-gradient(to right, #ffffff, #757575)',
+        'ethics-gradient': 'linear-gradient(to right, #ffffff, #78909c)',
+        'practice-gradient': 'linear-gradient(to right, #ffffff, #009688)',
       },
       fontFamily: {
         noto:["var(--font-Noto-Sans-JP)"],
