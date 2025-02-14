@@ -6,16 +6,12 @@ import { useParams } from "next/navigation";
 export function useExamData() {
   const params = useParams();
   const id = params?.id;
-  const [examData, setExamData] = useState<ExamData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [ExamData, setExamData] = useState<ExamData | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!id) {
-      setLoading(false);
-      return;
-    }
-
     async function fetchData() {
+      setLoading(true);
       try {
         const response = await fetch(`/api/exam/${id}`);
         if (!response.ok) {
@@ -35,5 +31,5 @@ export function useExamData() {
     fetchData();
   }, [id]);
 
-  return { examData, loading };
+  return { ExamData, loading };
 }
