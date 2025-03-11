@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Prisma from "@/lib/prisma";
+import { revalidateTag } from "next/cache";
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,6 +18,7 @@ export async function POST(req: NextRequest) {
         explanation: body.explanation,
       },
     });
+    revalidateTag("exams");
     return NextResponse.json(newExam, { status: 201 });
   } catch (error) {
     console.error("Error creating exam:", error);
