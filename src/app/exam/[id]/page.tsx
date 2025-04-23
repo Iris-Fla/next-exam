@@ -1,13 +1,16 @@
 import Link from "next/link";
-import { Examdetail } from "@/components/exam/Examdetail";
-import { Examrecommend } from "@/components/exam/ExamRecommend";
+import { Examdetail } from "@/features/exam/components/examdetail";
 
-export default function ExamDetailPage() {
+interface ExamDetailPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function ExamDetailPage({params}: ExamDetailPageProps) {
+  const {id} = await params;
+
   return (
     <div className="container mx-auto p-4">
-      <Examdetail />
-      <hr className="my-4 border-4 border-slate-700 rounded-lg transition-all duration-300" />
-      <Examrecommend />
+      <Examdetail id={Number(id)} />
       <Link href="/exam" className="text-blue-500 hover:underline">
         ← Back to Exam List
       </Link>
