@@ -1,14 +1,9 @@
-# Nextを用いた薬剤師国家試験対策サイト
-Next15 MySQL(AmazonRDS) Prisma を使用して薬剤師国家試験対策サイトを構築します。
+# 開発の手順
+1. `npm install`
+2. docker desktopを起動し、`npx supabase start`
+3. .envの内容をlocalに合わせる
 
-## 開発を始める
-1. .envにDBの情報を記載
-2. Nuxt3開発方法
-```
-npm install
-npm run dev
-```
-3. prismaサーバー起動
-```
-npx prisma studio
-```
+## データマイグレーション
+ログインしていない場合:`npx supabase login`
+1. `npx supabase link`で**name:SFE**を選択
+2. 
