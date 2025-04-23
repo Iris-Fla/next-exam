@@ -1,4 +1,4 @@
-import { ExamList } from "@/components/main/Examlist";
+import { ExamList } from "@/features/exam/components/examlist";
 
 export default function ExamPage() {
   return (

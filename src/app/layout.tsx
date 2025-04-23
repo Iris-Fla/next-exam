@@ -1,5 +1,3 @@
-// import { ConfigureAmplifyClientSide } from '@/components/ConfigureAmplify';
-import { ExamProvider } from "@/hooks/useSubjectContext";
 import { Noto_Sans_JP, M_PLUS_Rounded_1c } from "next/font/google";
 import type { Metadata } from 'next';
 import './globals.css';
@@ -31,10 +29,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${noto.variable} ${mplus.variable} font-noto`}>
-        {/* <ConfigureAmplifyClientSide /> */}
-        <ExamProvider>
         {children}
-        </ExamProvider>
       </body>
     </html>
   );
