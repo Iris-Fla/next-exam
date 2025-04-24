@@ -1,16 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 import { getExamDetail } from "@/features/exam/api/getExamDetail";
+import { DetailExamPageData } from "@/features/exam/types/examData";
 
 interface ExamdetailProps {
     id: number;
-  }
+}
 
 /** 動的ルーティングでidを受け取り、試験の詳細データとオススメの類似問題のページを返す */
 export function Examdetail({ id }: ExamdetailProps) {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [animate, setAnimate] = useState(false);
-    const [examdata, setExamdata] = useState<any>(null);
+
+    const [examdata, setExamdata] = useState<DetailExamPageData | null>(null);
 
     useEffect(() => {
         if (id !== undefined && !isNaN(id)) {
@@ -90,7 +92,7 @@ export function Examdetail({ id }: ExamdetailProps) {
                 <h2 className="text-2xl font-bold mb-4">オススメの類似問題</h2>
                 {examdata.recommendedExams.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {examdata.recommendedExams.map((exam: any) => (
+                        {examdata.recommendedExams.map((exam) => (
                             <a
                                 href={`/exam/${exam.id}`}
                                 key={exam.id}
