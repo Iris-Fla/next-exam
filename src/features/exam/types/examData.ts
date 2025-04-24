@@ -1,17 +1,30 @@
 import { Json } from "@/types/database.types";
 
+export type ExamStatus = "public" | "private" | "nonpublic";
+export type SubjectType =
+  | "physics"
+  | "chemistry"
+  | "biology"
+  | "hygiene"
+  | "pharmacology"
+  | "pharmacy"
+  | "pathology"
+  | "legal"
+  | "ethics"
+  | "practice";
+
 /** 試験データ */
 export interface ExamData {
-  id: number;
   exam_year: number;
   grade: number;
-  subject: string;
+  subject: SubjectType;
   problem_statement: string;
   problem_img: string | null;
   choices: Json;
-  choices_img_path: Json | null;
+  choices_img: Json | null;
   correct: number;
   explanation: string;
+  status: ExamStatus;
 }
 
 /** 試験データ(全件取得) */
