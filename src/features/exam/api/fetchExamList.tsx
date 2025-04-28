@@ -6,8 +6,8 @@ export const fetchExamList = async () => {
 
   if (error) {
     console.error("Error fetching exam list:", error);
-    return [];
+    return { success: false, error };
   }
-  // console.log("Fetched exam list:", data);
-  return data;
+  //console.log("Fetched exam list:", data);
+  return { success: true, data };
 }
