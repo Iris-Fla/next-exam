@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ExamList } from "@/features/exam/components/examlist"
+import ExamList from "@/features/exam/components/examlist"
 import { Button } from "@/components/ui/button"
 
 export default function ExamPage() {

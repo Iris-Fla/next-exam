@@ -1,5 +1,5 @@
 "use client";
-import { createExam } from "../api/createexam";
+import { createExamAction } from "@/features/exam/api/createexam";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
@@ -80,8 +80,8 @@ export function CreateExamForm() {
     });
 
     const onSubmit = async (data: ExamFormInput) => {
-        console.log("Submitted data:", data);
-        const result = await createExam({
+        setSubmitMessage(null);
+        const result = await createExamAction({
             ...data,
             choices: data.choices.map((c) => c.value),
             subject: data.subject as SubjectType,
