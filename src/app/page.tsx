@@ -1,10 +1,17 @@
-import Link from "next/link";
+import Link from "next/link"
+import { ExamList } from "@/features/exam/components/examlist"
+import { Button } from "@/components/ui/button"
 
-export default function Home() {
+export default function ExamPage() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">Hello, Next.js!</h1>
-      <Link href="/exam">ExamList</Link>
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-center text-xl font-bold">Exam List Page</h1>
+        <Button asChild>
+          <Link href="/exam/create">問題作成</Link>
+        </Button>
+      </div>
+      <ExamList />
     </div>
-  );
+  )
 }

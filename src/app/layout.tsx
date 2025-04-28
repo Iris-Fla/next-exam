@@ -2,6 +2,8 @@ import { Noto_Sans_JP, M_PLUS_Rounded_1c } from "next/font/google";
 import type { Metadata } from 'next';
 import './globals.css';
 
+import { Toaster } from "@/components/ui/sonner";
+
 const noto = Noto_Sans_JP({
   weight: ["400", "500"],
   subsets: ["latin"],
@@ -29,7 +31,8 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${noto.variable} ${mplus.variable} font-noto`}>
-        {children}
+        <main>{children}</main>
+        <Toaster />
       </body>
     </html>
   );

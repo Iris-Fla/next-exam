@@ -7,6 +7,7 @@ import { useState } from "react";
 import type { SubjectType } from "../types/examData";
 
 // shadcn/ui
+import { toast } from "sonner";
 import {
     Form,
     FormField,
@@ -89,7 +90,7 @@ export function CreateExamForm() {
             status: "public",
         });
         if (result.success) {
-            setSubmitMessage("作成に成功しました！");
+            toast.success("作成に成功しました！");
             reset();
         } else {
             setSubmitMessage("作成に失敗しました。");
