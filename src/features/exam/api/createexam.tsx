@@ -8,6 +8,7 @@ export async function createExamAction(examData: Omit<ExamData, "id">) {
   const supabase = await createClient()
   const { data, error } = await supabase.from("examdata").insert([examData])
   if (error) {
+    console.error("Error creating exam:", error)
     return { success: false, error: error.message }
   }
   return { success: true, data }

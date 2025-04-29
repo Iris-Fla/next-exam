@@ -38,12 +38,12 @@ export type Database = {
         Row: {
           choices: Json
           choices_img: Json | null
-          correct: number
+          correct: Json
           created_at: string
           exam_year: number
           explanation: string
           grade: number
-          id: number
+          id: string
           problem_img: string | null
           problem_statement: string
           status: Database["public"]["Enums"]["status"]
@@ -52,26 +52,26 @@ export type Database = {
         Insert: {
           choices: Json
           choices_img?: Json | null
-          correct: number
+          correct: Json
           created_at?: string
           exam_year: number
           explanation: string
           grade: number
-          id?: number
+          id?: string
           problem_img?: string | null
-          problem_statement: string
+          problem_statement?: string
           status: Database["public"]["Enums"]["status"]
           subject: Database["public"]["Enums"]["subjects"]
         }
         Update: {
           choices?: Json
           choices_img?: Json | null
-          correct?: number
+          correct?: Json
           created_at?: string
           exam_year?: number
           explanation?: string
           grade?: number
-          id?: number
+          id?: string
           problem_img?: string | null
           problem_statement?: string
           status?: Database["public"]["Enums"]["status"]

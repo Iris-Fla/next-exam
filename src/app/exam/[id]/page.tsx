@@ -11,7 +11,7 @@ export default async function ExamDetailPage({ params }: ExamDetailPageProps) {
   return (
     <div className="container mx-auto p-4">
       <BackToListButton />
-      <Examdetail id={Number(id)} />
+      <Examdetail id={id} />
     </div>
   );
 }

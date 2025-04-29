@@ -22,14 +22,14 @@ export interface ExamData {
   problem_img: string | null;
   choices: Json;
   choices_img: Json | null;
-  correct: number;
+  correct: Json;
   explanation: string;
   status: ExamStatus;
 }
 
 /** 試験データ(全件取得) */
 export interface fetchExamListResponse {
-  id: number;
+  id: string;
   exam_year: number;
   subject: string;
   grade: number;
@@ -42,13 +42,13 @@ export interface DetailExam {
   subject: string;
   problem_statement: string;
   choices: Json;
-  correct: number;
+  correct: Json;
   explanation: string;
 }
 
 /** 試験データ(詳細取得)オススメの試験問題 */
 export interface RecommendedExam {
-  id: number;
+  id: string;
   exam_year: number;
   subject: string;
   grade: number;
