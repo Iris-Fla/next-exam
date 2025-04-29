@@ -19,10 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-    RadioGroup,
-    RadioGroupItem,
-} from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const examSchema = z.object({
     exam_year: z.number({ invalid_type_error: "年度を入力してください" }),
@@ -43,7 +40,7 @@ const examSchema = z.object({
     choices: z
         .array(z.object({ value: z.string().min(1, "選択肢を入力してください") }))
         .min(2, "2つ以上の選択肢が必要です"),
-    correct: z.number().min(0, "正解番号を選択してください"),
+    correct: z.array(z.number()).min(1, "正解番号を1つ以上選択してください"),
     explanation: z.string().min(1, "解説を入力してください"),
     status: z.enum(["public", "private", "nonpublic"]),
 });
@@ -61,7 +58,7 @@ export function CreateExamForm() {
             subject: "physics",
             problem_statement: "",
             choices: [{ value: "" }, { value: "" }],
-            correct: 0,
+            correct: [],
             explanation: "",
             status: "public",
         },
@@ -217,13 +214,16 @@ export function CreateExamForm() {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormControl>
-                                            <RadioGroup
-                                                value={String(field.value)}
-                                                onValueChange={(val) => field.onChange(Number(val))}
-                                                className="flex items-center"
-                                            >
-                                                <RadioGroupItem value={String(idx)} />
-                                            </RadioGroup>
+                                            <Checkbox
+                                                checked={field.value?.includes(idx)}
+                                                onCheckedChange={(checked) => {
+                                                    if (checked) {
+                                                        field.onChange([...(field.value || []), idx]);
+                                                    } else {
+                                                        field.onChange((field.value || []).filter((v: number) => v !== idx));
+                                                    }
+                                                }}
+                                            />
                                         </FormControl>
                                     </FormItem>
                                 )}

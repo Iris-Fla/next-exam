@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/client";
 
-export const getExamDetail = async (id: number) => {
+export async function getExamDetail(id: string) {
     const { data, error } = await supabase
         .from("examdata")
         .select("*")

@@ -4,18 +4,19 @@ import { getExamDetail } from "@/features/exam/api/getExamDetail";
 import { DetailExamPageData } from "@/features/exam/types/examData";
 
 interface ExamdetailProps {
-    id: number;
+    id: string;
 }
 
 /** 動的ルーティングでidを受け取り、試験の詳細データとオススメの類似問題のページを返す */
 export function Examdetail({ id }: ExamdetailProps) {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [animate, setAnimate] = useState(false);
+    const [selectedChoices, setSelectedChoices] = useState<number[]>([]);
 
     const [examdata, setExamdata] = useState<DetailExamPageData | null>(null);
 
     useEffect(() => {
-        if (id !== undefined && !isNaN(id)) {
+        if (id !== undefined && id !== null) {
             getExamDetail(id).then((data) => setExamdata(data));
         }
     }, [id]);
@@ -28,12 +29,30 @@ export function Examdetail({ id }: ExamdetailProps) {
         ? (examdata.detailExam.choices as string[])
         : [];
 
-    const handleChoiceClick = (index: number) => {
-        if (index === examdata.detailExam.correct) {
-            setIsCorrect(true);
-        } else {
-            setIsCorrect(false);
-        }
+    // 正解配列（例: [1,2]）
+    const correctAnswers: number[] = Array.isArray(examdata.detailExam.correct)
+    ? examdata.detailExam.correct.filter((v): v is number => typeof v === "number")
+    : typeof examdata.detailExam.correct === "number"
+        ? [examdata.detailExam.correct]
+        : [];
+
+    // 選択肢のトグル
+    const handleChoiceToggle = (index: number) => {
+        setSelectedChoices((prev) =>
+            prev.includes(index)
+                ? prev.filter((i) => i !== index)
+                : [...prev, index]
+        );
+    };
+
+    // 解答判定
+    const handleSubmit = () => {
+        // 選択肢と正解配列が一致するか（順不同）
+        const isAnswerCorrect =
+            selectedChoices.length === correctAnswers.length &&
+            selectedChoices.every((val) => correctAnswers.includes(val)) &&
+            correctAnswers.every((val) => selectedChoices.includes(val));
+        setIsCorrect(isAnswerCorrect);
         setAnimate(true);
         setTimeout(() => setAnimate(false), 300);
     };
@@ -55,12 +74,21 @@ export function Examdetail({ id }: ExamdetailProps) {
                                 {choicesArray.map((choice, index) => (
                                     <button
                                         key={index}
-                                        onClick={() => handleChoiceClick(index)}
-                                        className="bg-slate-500 text-white py-6 rounded transition duration-150 ease-in-out hover:scale-105 active:bg-slate-700 text-xl"
+                                        onClick={() => handleChoiceToggle(index)}
+                                        className={`bg-slate-500 text-white py-6 rounded transition duration-150 ease-in-out hover:scale-105 active:bg-slate-700 text-xl
+                                            ${selectedChoices.includes(index) ? "ring-4 ring-blue-400" : ""}
+                                        `}
                                     >
                                         {choice}
                                     </button>
                                 ))}
+                                <button
+                                    onClick={handleSubmit}
+                                    className="mt-4 bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition"
+                                    disabled={selectedChoices.length === 0}
+                                >
+                                    解答する
+                                </button>
                             </div>
                         ) : (
                             <p className="text-red-500">選択肢が見つかりませんでした</p>
