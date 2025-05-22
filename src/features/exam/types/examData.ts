@@ -60,3 +60,15 @@ export interface DetailExamPageData {
   detailExam: DetailExam;
   recommendedExams: RecommendedExam[];
 }
+
+/** データテーブルでの表示 */
+export interface ExamListTableData {
+  exam_year: number;
+  subject: string;
+  grade: number;
+  problem_statement: string;
+  choices: Json;
+  correct: Json;
+  explanation: string;
+  status: ExamStatus;
+}
