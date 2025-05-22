@@ -7,12 +7,12 @@ import { ExamListTableData } from "@/features/exam/types/examData";
 import { useEffect, useState } from "react";
 
 export default function ExamListTable() {
-      const [examdata, setExamdata] = useState<ExamListTableData[]>([])
+      const [examData, setExamData] = useState<ExamListTableData[]>([])
     
       async function reload() {
         const response = await fetchExamListDataTable()
         if (response.success && response.data) {
-          setExamdata(response.data)
+          setExamData(response.data)
         }
       }
     
@@ -24,7 +24,7 @@ export default function ExamListTable() {
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-center">Exam List</h1>
-            <DataTable columns={columns} data={examdata} />
+            <DataTable columns={columns} data={examData} />
         </div>
     );
 }
