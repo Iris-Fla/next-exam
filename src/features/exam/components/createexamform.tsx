@@ -5,6 +5,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
 import type { SubjectType } from "../types/examData";
+import { uploadImageAction } from "@/features/exam/api/uploadimage";
 
 // shadcn/ui
 import { toast } from "sonner";
@@ -37,9 +38,20 @@ const examSchema = z.object({
         "practice",
     ]),
     problem_statement: z.string().min(1, "問題文を入力してください"),
+    problem_img: z
+        .union([
+            z.instanceof(File).refine(
+                (file) => file.type.startsWith("image/"),
+                { message: "画像ファイルを選択してください" }
+            ),
+            z.string().url(), // 既存画像URLの場合
+            z.undefined(),
+        ]).optional(),
     choices: z
         .array(z.object({ value: z.string().min(1, "選択肢を入力してください") }))
         .min(2, "2つ以上の選択肢が必要です"),
+    choices_img: z
+        .array(z.union([z.instanceof(File), z.string().url(), z.undefined()])).optional(),
     correct: z.array(z.number()).min(1, "正解番号を1つ以上選択してください"),
     explanation: z.string().min(1, "解説を入力してください"),
     status: z.enum(["public", "private", "nonpublic"]),
@@ -57,7 +69,9 @@ export function CreateExamForm() {
             grade: undefined,
             subject: "physics",
             problem_statement: "",
+            problem_img: undefined,
             choices: [{ value: "" }, { value: "" }],
+            choices_img: [],
             correct: [],
             explanation: "",
             status: "public",
@@ -78,11 +92,28 @@ export function CreateExamForm() {
 
     const onSubmit = async (data: ExamFormInput) => {
         setSubmitMessage(null);
+
+        // 問題画像が選択されている場合、アップロード処理を行い、data.problem_imgをurlに更新
+        if (data.problem_img && typeof data.problem_img === "object" && "name" in data.problem_img) {
+            try {
+                const uploadResult = await uploadImageAction(data.problem_img as File);
+                if (uploadResult?.url) {
+                    data.problem_img = uploadResult.url;
+                } else {
+                    setSubmitMessage(`画像のアップロードに失敗しました。${uploadResult?.error || ""}`);
+                    return;
+                }
+            } catch {
+                setSubmitMessage("画像のアップロードに失敗しました。");
+                return;
+            }
+        }
+
         const result = await createExamAction({
             ...data,
             choices: data.choices.map((c) => c.value),
             subject: data.subject as SubjectType,
-            problem_img: null,
+            problem_img: data.problem_img || null,
             choices_img: null,
             status: "public",
         });
@@ -187,6 +218,26 @@ export function CreateExamForm() {
                     )}
                 />
 
+                <FormField
+                    control={control}
+                    name="problem_img"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>問題画像</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={e => {
+                                        field.onChange(e.target.files?.[0]);
+                                    }}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
                 <div>
                     <FormLabel>選択肢</FormLabel>
                     {fields.map((field, idx) => (
@@ -208,6 +259,24 @@ export function CreateExamForm() {
                                     </FormItem>
                                 )}
                             />
+                            {/* <FormField
+                                control={control}
+                                name={`choices.${idx}.img`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={e => {
+                                                    field.onChange(e.target.files?.[0]);
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            /> */}
                             <FormField
                                 control={control}
                                 name="correct"
@@ -257,6 +326,7 @@ export function CreateExamForm() {
                         <FormMessage>{errors.correct.message}</FormMessage>
                     )}
                 </div>
+
 
                 <FormField
                     control={control}

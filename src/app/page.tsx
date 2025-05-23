@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link"
 import ExamList from "@/features/exam/components/examlist"
 import { Button } from "@/components/ui/button"
