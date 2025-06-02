@@ -40,8 +40,11 @@ export interface fetchExamListResponse {
 export interface DetailExam {
   exam_year: number;
   subject: string;
+  grade: number;
   problem_statement: string;
+  problem_img: string | null;
   choices: Json;
+  choices_img: Json | null;
   correct: Json;
   explanation: string;
 }

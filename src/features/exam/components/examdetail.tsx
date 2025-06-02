@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { getExamDetail } from "@/features/exam/api/getExamDetail";
 import { DetailExamPageData } from "@/features/exam/types/examData";
+import Image from 'next/image';
 
 interface ExamdetailProps {
     id: string;
@@ -29,12 +30,16 @@ export function Examdetail({ id }: ExamdetailProps) {
         ? (examdata.detailExam.choices as string[])
         : [];
 
+    const choicesImgArray = Array.isArray(examdata.detailExam.choices_img)
+        ? (examdata.detailExam.choices_img as string[])
+        : [];
+
     // 正解配列（例: [1,2]）
     const correctAnswers: number[] = Array.isArray(examdata.detailExam.correct)
-    ? examdata.detailExam.correct.filter((v): v is number => typeof v === "number")
-    : typeof examdata.detailExam.correct === "number"
-        ? [examdata.detailExam.correct]
-        : [];
+        ? examdata.detailExam.correct.filter((v): v is number => typeof v === "number")
+        : typeof examdata.detailExam.correct === "number"
+            ? [examdata.detailExam.correct]
+            : [];
 
     // 選択肢のトグル
     const handleChoiceToggle = (index: number) => {
@@ -67,6 +72,18 @@ export function Examdetail({ id }: ExamdetailProps) {
                         </h1>
                         <p className="text-lg mb-2">科目: {examdata.detailExam.subject}</p>
                         <p className="text-lg mb-4">本文: {examdata.detailExam.problem_statement}</p>
+                        {examdata.detailExam.problem_img && examdata.detailExam.problem_img.trim() !== "" && (
+                            <div className="my-4">
+                                <Image
+                                    src={examdata.detailExam.problem_img}
+                                    alt="問題画像"
+                                    width={400}
+                                    height={300}
+                                    className="max-w-full h-auto rounded shadow"
+                                    style={{ objectFit: 'contain' }}
+                                />
+                            </div>
+                        )}
                     </div>
                     <div className="mb-4">
                         {choicesArray.length > 0 ? (
@@ -76,10 +93,22 @@ export function Examdetail({ id }: ExamdetailProps) {
                                         key={index}
                                         onClick={() => handleChoiceToggle(index)}
                                         className={`bg-slate-500 text-white py-6 rounded transition duration-150 ease-in-out hover:scale-105 active:bg-slate-700 text-xl
-                                            ${selectedChoices.includes(index) ? "ring-4 ring-blue-400" : ""}
-                                        `}
+                    ${selectedChoices.includes(index) ? "ring-4 ring-blue-400" : ""}
+                `}
                                     >
-                                        {choice}
+                                        <div className="flex flex-col items-center gap-2">
+                                            <span>{choice}</span>
+                                            {choicesImgArray[index] && choicesImgArray[index].trim() !== "" && (
+                                                <Image
+                                                    src={choicesImgArray[index]}
+                                                    alt={`選択肢${index + 1}画像`}
+                                                    width={200}
+                                                    height={150}
+                                                    className="max-w-full h-auto rounded shadow"
+                                                    style={{ objectFit: 'contain' }}
+                                                />
+                                            )}
+                                        </div>
                                     </button>
                                 ))}
                                 <button
