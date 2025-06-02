@@ -42,6 +42,7 @@ export type Database = {
           created_at: string
           exam_year: number
           explanation: string
+          explanation_img: string | null
           grade: number
           id: string
           problem_img: string | null
@@ -56,6 +57,7 @@ export type Database = {
           created_at?: string
           exam_year: number
           explanation: string
+          explanation_img?: string | null
           grade: number
           id?: string
           problem_img?: string | null
@@ -70,6 +72,7 @@ export type Database = {
           created_at?: string
           exam_year?: number
           explanation?: string
+          explanation_img?: string | null
           grade?: number
           id?: string
           problem_img?: string | null

@@ -128,13 +128,24 @@ export function Examdetail({ id }: ExamdetailProps) {
                     {isCorrect !== null && (
                         <div>
                             <div
-                                className={`m-4 p-4 border rounded transition-transform duration-300 ${animate ? "scale-105" : ""
-                                    }`}
+                                className={`m-4 p-4 border rounded transition-transform duration-300 ${animate ? "scale-105" : ""}`}
                             >
                                 {isCorrect ? (
                                     <div>
                                         <p className="text-green-500 text-2xl text-bold">正解</p>
                                         <p className="text-lg">解説: {examdata.detailExam.explanation}</p>
+                                        {examdata.detailExam.explanation_img && examdata.detailExam.explanation_img.trim() !== "" && (
+                                            <div className="my-4">
+                                                <Image
+                                                    src={examdata.detailExam.explanation_img}
+                                                    alt="解説画像"
+                                                    width={400}
+                                                    height={300}
+                                                    className="max-w-full h-auto rounded shadow"
+                                                    style={{ objectFit: 'contain' }}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 ) : (
                                     <p className="text-red-500 text-2xl text-bold">不正解</p>

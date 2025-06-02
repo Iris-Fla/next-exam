@@ -24,6 +24,7 @@ export interface ExamData {
   choices_img: Json | null;
   correct: Json;
   explanation: string;
+  explanation_img: string | null;
   status: ExamStatus;
 }
 
@@ -47,6 +48,7 @@ export interface DetailExam {
   choices_img: Json | null;
   correct: Json;
   explanation: string;
+  explanation_img: string | null;
 }
 
 /** 試験データ(詳細取得)オススメの試験問題 */
