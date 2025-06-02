@@ -60,6 +60,15 @@ const examSchema = z.object({
         .optional(),
     correct: z.array(z.number()).min(1, "正解番号を1つ以上選択してください"),
     explanation: z.string().min(1, "解説を入力してください"),
+    explanation_img: z
+        .union([
+            z.instanceof(File).refine(
+                (file) => file.type.startsWith("image/"),
+                { message: "画像ファイルを選択してください" }
+            ),
+            z.string().url(),
+            z.undefined(),
+        ]).optional(),
     status: z.enum(["public", "private", "nonpublic"]),
 });
 
@@ -81,6 +90,7 @@ export function CreateExamForm() {
             choices_img: ["", ""],
             correct: [],
             explanation: "",
+            explanation_img: undefined,
             status: "public",
         },
     });
@@ -132,14 +142,25 @@ export function CreateExamForm() {
             choicesImgUrls = [];
         }
 
+        // 解説画像
+        let explanationImgUrl: string | null = null;
+        if (typeof data.explanation_img === "string") {
+            explanationImgUrl = data.explanation_img;
+        } else if (isFile(data.explanation_img)) {
+            const result = await uploadImageAction(data.explanation_img);
+            explanationImgUrl = result?.url ?? null;
+        }
+
         const result = await createExamAction({
             ...data,
             choices: data.choices.map((c) => c.value),
             subject: data.subject as SubjectType,
             problem_img: problemImgUrl,
             choices_img: choicesImgUrls,
+            explanation_img: explanationImgUrl,
             status: data.status,
         });
+
         if (result.success) {
             toast.success("作成に成功しました！");
             reset();
@@ -404,6 +425,50 @@ export function CreateExamForm() {
                             <FormLabel>解説</FormLabel>
                             <FormControl>
                                 <Textarea rows={2} {...field} value={field.value ?? ""} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={control}
+                    name="explanation_img"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>解説用画像</FormLabel>
+                            <FormControl>
+                                <div className="flex items-center gap-2">
+                                    {typeof field.value === "string" && field.value !== "" && (
+                                        <Image
+                                            src={field.value}
+                                            alt="問題画像"
+                                            width={80}
+                                            height={80}
+                                            className="object-cover rounded"
+                                        />
+                                    )}
+                                    <Input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={e => {
+                                            const file = e.target.files?.[0];
+                                            if (file) {
+                                                field.onChange(file); // Fileをそのまま保持
+                                            }
+                                        }}
+                                    />
+                                    {typeof field.value === "string" && field.value !== "" && (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => field.onChange(undefined)}
+                                        >
+                                            削除
+                                        </Button>
+                                    )}
+                                </div>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
