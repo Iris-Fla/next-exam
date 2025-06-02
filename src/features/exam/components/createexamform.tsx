@@ -1,11 +1,12 @@
 "use client";
+import Image from "next/image";
 import { createExamAction } from "@/features/exam/api/createexam";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
 import type { SubjectType } from "../types/examData";
 import { uploadImageAction } from "@/features/exam/api/uploadimage";
+import { useState } from "react";
 
 // shadcn/ui
 import { toast } from "sonner";
@@ -44,14 +45,19 @@ const examSchema = z.object({
                 (file) => file.type.startsWith("image/"),
                 { message: "画像ファイルを選択してください" }
             ),
-            z.string().url(), // 既存画像URLの場合
+            z.string().url(),
             z.undefined(),
         ]).optional(),
     choices: z
         .array(z.object({ value: z.string().min(1, "選択肢を入力してください") }))
         .min(2, "2つ以上の選択肢が必要です"),
     choices_img: z
-        .array(z.union([z.instanceof(File), z.string().url(), z.undefined()])).optional(),
+        .array(
+            z.string().url()
+                .or(z.instanceof(File))
+                .or(z.literal("").optional())
+        )
+        .optional(),
     correct: z.array(z.number()).min(1, "正解番号を1つ以上選択してください"),
     explanation: z.string().min(1, "解説を入力してください"),
     status: z.enum(["public", "private", "nonpublic"]),
@@ -61,6 +67,7 @@ type ExamFormInput = z.infer<typeof examSchema>;
 
 export function CreateExamForm() {
     const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
 
     const form = useForm<ExamFormInput>({
         resolver: zodResolver(examSchema),
@@ -71,7 +78,7 @@ export function CreateExamForm() {
             problem_statement: "",
             problem_img: undefined,
             choices: [{ value: "" }, { value: "" }],
-            choices_img: [],
+            choices_img: ["", ""],
             correct: [],
             explanation: "",
             status: "public",
@@ -90,32 +97,48 @@ export function CreateExamForm() {
         name: "choices",
     });
 
+    // 型ガード関数の追加
+    function isFile(obj: unknown): obj is File {
+        return typeof obj === "object" && obj !== null && obj instanceof File;
+    }
+
     const onSubmit = async (data: ExamFormInput) => {
+        setUploading(true);
         setSubmitMessage(null);
 
-        // 問題画像が選択されている場合、アップロード処理を行い、data.problem_imgをurlに更新
-        if (data.problem_img && typeof data.problem_img === "object" && "name" in data.problem_img) {
-            try {
-                const uploadResult = await uploadImageAction(data.problem_img as File);
-                if (uploadResult?.url) {
-                    data.problem_img = uploadResult.url;
+        // 問題画像
+        let problemImgUrl: string | null = null;
+        if (typeof data.problem_img === "string") {
+            problemImgUrl = data.problem_img;
+        } else if (isFile(data.problem_img)) {
+            const result = await uploadImageAction(data.problem_img);
+            problemImgUrl = result?.url ?? null;
+        }
+
+        // 選択肢画像
+        let choicesImgUrls: (string | null)[] = [];
+        if (Array.isArray(data.choices_img)) {
+            for (const img of data.choices_img) {
+                if (typeof img === "string") {
+                    choicesImgUrls.push(img);
+                } else if (isFile(img)) {
+                    const result = await uploadImageAction(img);
+                    choicesImgUrls.push(result?.url ?? "");
                 } else {
-                    setSubmitMessage(`画像のアップロードに失敗しました。${uploadResult?.error || ""}`);
-                    return;
+                    choicesImgUrls.push("");
                 }
-            } catch {
-                setSubmitMessage("画像のアップロードに失敗しました。");
-                return;
             }
+        } else {
+            choicesImgUrls = [];
         }
 
         const result = await createExamAction({
             ...data,
             choices: data.choices.map((c) => c.value),
             subject: data.subject as SubjectType,
-            problem_img: data.problem_img || null,
-            choices_img: null,
-            status: "public",
+            problem_img: problemImgUrl,
+            choices_img: choicesImgUrls,
+            status: data.status,
         });
         if (result.success) {
             toast.success("作成に成功しました！");
@@ -123,6 +146,7 @@ export function CreateExamForm() {
         } else {
             setSubmitMessage("作成に失敗しました。");
         }
+        setUploading(false);
     };
 
     const subjectOptions: { value: SubjectType; label: string }[] = [
@@ -225,13 +249,37 @@ export function CreateExamForm() {
                         <FormItem>
                             <FormLabel>問題画像</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={e => {
-                                        field.onChange(e.target.files?.[0]);
-                                    }}
-                                />
+                                <div className="flex items-center gap-2">
+                                    {typeof field.value === "string" && field.value !== "" && (
+                                        <Image
+                                            src={field.value}
+                                            alt="問題画像"
+                                            width={80}
+                                            height={80}
+                                            className="object-cover rounded"
+                                        />
+                                    )}
+                                    <Input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={e => {
+                                            const file = e.target.files?.[0];
+                                            if (file) {
+                                                field.onChange(file); // Fileをそのまま保持
+                                            }
+                                        }}
+                                    />
+                                    {typeof field.value === "string" && field.value !== "" && (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => field.onChange(undefined)}
+                                        >
+                                            削除
+                                        </Button>
+                                    )}
+                                </div>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -259,24 +307,32 @@ export function CreateExamForm() {
                                     </FormItem>
                                 )}
                             />
-                            {/* <FormField
+                            <FormField
                                 control={control}
-                                name={`choices.${idx}.img`}
-                                render={({ field }) => (
+                                name={`choices_img.${idx}`}
+                                render={() => (
                                     <FormItem>
                                         <FormControl>
-                                            <Input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={e => {
-                                                    field.onChange(e.target.files?.[0]);
-                                                }}
-                                            />
+                                            <div className="flex items-center gap-2">
+                                                {/* ファイル選択 */}
+                                                <Input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={e => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file) {
+                                                            const arr = [...(form.getValues("choices_img") || [])];
+                                                            arr[idx] = file;
+                                                            form.setValue("choices_img", arr);
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            /> */}
+                            />
                             <FormField
                                 control={control}
                                 name="correct"
@@ -303,7 +359,13 @@ export function CreateExamForm() {
                                     type="button"
                                     variant="ghost"
                                     size="sm"
-                                    onClick={() => remove(idx)}
+                                    onClick={() => {
+                                        remove(idx);
+                                        // choices_imgも同期して削除
+                                        const arr = [...(form.getValues("choices_img") || [])];
+                                        arr.splice(idx, 1);
+                                        form.setValue("choices_img", arr);
+                                    }}
                                     className="text-red-500"
                                 >
                                     削除
@@ -313,7 +375,13 @@ export function CreateExamForm() {
                     ))}
                     <Button
                         type="button"
-                        onClick={() => append({ value: "" })}
+                        onClick={() => {
+                            append({ value: "" });
+                            // choices_imgも同期して追加
+                            const arr = [...(form.getValues("choices_img") || [])];
+                            arr.push("");
+                            form.setValue("choices_img", arr);
+                        }}
                         variant="outline"
                         className="mt-1"
                     >
@@ -363,6 +431,15 @@ export function CreateExamForm() {
                 <Button type="submit" disabled={isSubmitting}>
                     作成
                 </Button>
+                {uploading && (
+                    <div className="flex items-center gap-2 mt-2 text-blue-500">
+                        <svg className="animate-spin h-5 w-5 text-blue-500" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                        </svg>
+                        アップロード中...
+                    </div>
+                )}
                 {submitMessage && <div className="mt-2">{submitMessage}</div>}
             </form>
         </Form>
