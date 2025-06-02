@@ -117,7 +117,8 @@ CREATE TABLE IF NOT EXISTS "public"."examdata" (
     "choices_img" "jsonb",
     "correct" "jsonb" NOT NULL,
     "explanation" "text" NOT NULL,
-    "status" "public"."status" NOT NULL
+    "status" "public"."status" NOT NULL,
+    "explanation_img" "text"
 );
 
 
@@ -125,6 +126,10 @@ ALTER TABLE "public"."examdata" OWNER TO "postgres";
 
 
 COMMENT ON TABLE "public"."examdata" IS '試験データ';
+
+
+
+COMMENT ON COLUMN "public"."examdata"."explanation_img" IS '解説用画像';
 
 
 
