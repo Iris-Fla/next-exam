@@ -138,13 +138,17 @@ export function EditExamForm({ id }: EditExamFormProps) {
                 problem_statement: data.problem_statement,
                 problem_img: data.problem_img ?? undefined,
                 choices: Array.isArray(data.choices)
-                    ? data.choices.map((v: string) => ({ value: v }))
+                    ? data.choices.map((v) => ({
+                        value: typeof v === "string" && v !== null ? v : v == null ? "" : String(v)
+                    }))
                     : [{ value: "" }, { value: "" }],
                 choices_img: Array.isArray(data.choices_img)
-                    ? data.choices_img
+                    ? data.choices_img.map((img) =>
+                        typeof img === "string" || img instanceof File ? img : undefined
+                    )
                     : [],
                 correct: Array.isArray(data.correct)
-                    ? data.correct
+                    ? data.correct.filter((v): v is number => typeof v === "number")
                     : typeof data.correct === "number"
                         ? [data.correct]
                         : [],
@@ -171,7 +175,7 @@ export function EditExamForm({ id }: EditExamFormProps) {
         }
 
         // 選択肢画像
-        let choicesImgUrls: (string | null)[] = [];
+        let choicesImgUrls: string[] = [];
         if (Array.isArray(data.choices_img)) {
             for (const img of data.choices_img) {
                 if (typeof img === "string") {
@@ -180,6 +184,7 @@ export function EditExamForm({ id }: EditExamFormProps) {
                     const result = await uploadImageAction(img);
                     choicesImgUrls.push(result?.url ?? "");
                 } else {
+                    // null, undefined, "" などは空文字列に
                     choicesImgUrls.push("");
                 }
             }
@@ -382,16 +387,26 @@ export function EditExamForm({ id }: EditExamFormProps) {
                                     <FormItem>
                                         <FormControl>
                                             <div className="flex items-center gap-2">
-                                                {typeof form.getValues("choices_img")?.[idx] === "string" &&
-                                                    form.getValues("choices_img")?.[idx] !== "" && (
-                                                        <Image
-                                                            src={form.getValues("choices_img")[idx]}
-                                                            alt={`選択肢${idx + 1}画像`}
-                                                            width={40}
-                                                            height={40}
-                                                            className="object-cover rounded"
-                                                        />
-                                                    )}
+                                                {(() => {
+                                                    const value = form.getValues("choices_img")?.[idx];
+                                                    let src: string | undefined = undefined;
+                                                    if (typeof value === "string" && value !== "") {
+                                                        src = value;
+                                                    } else if (value instanceof File) {
+                                                        src = URL.createObjectURL(value);
+                                                    }
+                                                    return (
+                                                        src && (
+                                                            <Image
+                                                                src={src}
+                                                                alt={`選択肢${idx + 1}画像`}
+                                                                width={40}
+                                                                height={40}
+                                                                className="object-cover rounded"
+                                                            />
+                                                        )
+                                                    );
+                                                })()}
                                                 <Input
                                                     type="file"
                                                     accept="image/*"
