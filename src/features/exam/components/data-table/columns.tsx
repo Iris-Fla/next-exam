@@ -2,6 +2,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ExamListTableData } from "@/features/exam/types/examData";
 import { renameSubject } from "@/features/exam/utils/renameSubject";
+import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { Cog } from "lucide-react";
 
 export const columns: ColumnDef<ExamListTableData>[] = [
     {
@@ -34,11 +37,25 @@ export const columns: ColumnDef<ExamListTableData>[] = [
         header: "正解",
     },
     {
-        accessorKey:"explanation",
-        header:"解説",
+        accessorKey: "explanation",
+        header: "解説",
     },
     {
-        accessorKey:"status",
-        header:"公開状況",
+        accessorKey: "status",
+        header: "公開状況",
+    },
+    {
+        //編集ボタンを追加する
+        accessorKey: "id",
+        header: "編集",
+        cell: ({ row }) => {
+            const id = row.original
+
+            return (
+                <Button asChild>
+                    <Link href={`/exam/edit/${id.id}`}><Cog/>編集</Link>
+                </Button>
+            )
+        }
     }
 ];

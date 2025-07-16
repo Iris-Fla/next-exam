@@ -68,6 +68,7 @@ export interface DetailExamPageData {
 
 /** データテーブルでの表示 */
 export interface ExamListTableData {
+  id: string;
   exam_year: number;
   subject: string;
   grade: number;
