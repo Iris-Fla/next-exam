@@ -9,6 +9,9 @@ export default function ExamPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-center text-xl font-bold">Exam List Page</h1>
         <Button asChild>
+          <Link href="/exam/list">一覧テーブル,編集</Link>
+        </Button>
+        <Button asChild>
           <Link href="/exam/create">問題作成</Link>
         </Button>
       </div>
